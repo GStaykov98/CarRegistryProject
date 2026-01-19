@@ -13,9 +13,6 @@ namespace CarRegistryProject.Models
         public string Model { get; set; } = "";
         public string RegistrationNumber { get; set; } = "";
         public int CarTicketNumber { get; set; }
-        public int PolicyNumber { get; set; }
-        public DateOnly InsuranceStartDate { get; set; }
-        public DateOnly InsuranceEndDate { get; set; }
-        public InstallmentPlan InstallmentPlan { get; set; } = InstallmentPlan.Yearly;
+        public Insurance? Insurance { get; set; }
     }
 }

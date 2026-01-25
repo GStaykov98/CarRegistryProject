@@ -15,6 +15,7 @@ namespace CarRegistryProject.Data
         public DbSet<Person> People => Set<Person>();
         public DbSet<Car> Cars => Set<Car>();
         public DbSet<Insurance> Insurances => Set<Insurance>();
+        public DbSet<ComprehensiveInsurance> ComprehensiveInsurances => Set<ComprehensiveInsurance>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,6 +40,12 @@ namespace CarRegistryProject.Data
                 .HasForeignKey<Insurance>(i => i.CarId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Car>()
+                .HasOne(c => c.ComprehensiveInsurance)
+                .WithOne(c => c.Car)
+                .HasForeignKey<ComprehensiveInsurance>(i => i.CarId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Person>()
                 .HasIndex(p => p.GovernmentId)
                 .IsUnique();
@@ -48,6 +55,10 @@ namespace CarRegistryProject.Data
                 .IsUnique();
 
             modelBuilder.Entity<Insurance>()
+                .HasIndex(i => i.CarId)
+                .IsUnique();
+
+            modelBuilder.Entity<ComprehensiveInsurance>()
                 .HasIndex(i => i.CarId)
                 .IsUnique();
 
@@ -63,6 +74,14 @@ namespace CarRegistryProject.Data
             modelBuilder.Entity<Insurance>()
                 .Property(i => i.EndDate)
                 .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<ComprehensiveInsurance>()
+                .Property(i => i.StartDate)
+                .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<ComprehensiveInsurance>()
+               .Property(i => i.EndDate)
+               .HasConversion(dateOnlyConverter);
 
         }
 

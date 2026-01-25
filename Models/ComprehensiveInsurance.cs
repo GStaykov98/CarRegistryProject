@@ -15,6 +15,6 @@ namespace CarRegistryProject.Models
 
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
-        public int PolicyNumber { get; set; }
+        public string PolicyNumber { get; set; } = "";
     }
 }

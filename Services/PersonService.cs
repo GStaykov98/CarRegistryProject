@@ -11,7 +11,7 @@ namespace CarRegistryProject.Services
 {
     public class PersonService
     {
-        public Person CreatePerson(string name, string governmentId)
+        public Person CreatePerson(string name, string governmentId, int phoneNumber)
         {
             name = (name ?? "").Trim();
             governmentId = (governmentId ?? "").Trim();

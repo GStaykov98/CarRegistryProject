@@ -14,6 +14,6 @@ namespace CarRegistryProject.Models
         public string RegistrationNumber { get; set; } = "";
         public int CarTicketNumber { get; set; }
         public Insurance? Insurance { get; set; }
-        public ComprehensiveInsurance? ComprehensiveInsurance { get; set; };
+        public ComprehensiveInsurance? ComprehensiveInsurance { get; set; }
     }
 }

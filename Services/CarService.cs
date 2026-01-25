@@ -11,7 +11,7 @@ namespace CarRegistryProject.Services
 {
     public class CarService
     {
-        public Car AddCar(int personId, string brand, string model, string registrationNumber)
+        public Car AddCar(int personId, string brand, string model, string registrationNumber, int carTicketNumber)
         {
             brand = (brand ?? "").Trim();
             model = (model ?? "").Trim();
@@ -49,7 +49,8 @@ namespace CarRegistryProject.Services
                 PersonId = personId,
                 Brand = brand,
                 Model = model,
-                RegistrationNumber = registrationNumber
+                RegistrationNumber = registrationNumber,
+                CarTicketNumber = carTicketNumber
             };
 
             db.Cars.Add(car);

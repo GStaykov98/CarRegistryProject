@@ -23,6 +23,7 @@ namespace CarRegistryProject
     {
         private readonly int _personId;
         private readonly PersonService _personService = new PersonService();
+        private readonly CarService _carService = new CarService();
         private Person? _person;
         public PersonProfileWindow(int personId)
         {
@@ -43,7 +44,44 @@ namespace CarRegistryProject
             }
 
             Title = $"{_person.Name} (ID: {_person.Id})";
-            HeaderText.Text = $"{_person.Name} | GovID: {_person.GovernmentId} | Phone: {_person.PhoneNumber}";
+
+            HeaderText.Text = _person.Name;
+            InfoText.Text = $"{_person.Name} | GovID: {_person.GovernmentId} | Phone: {_person.PhoneNumber}";
+
+            CarsGrid.ItemsSource = _person.Cars;
+        }
+
+        private void CarsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (CarsGrid.SelectedItem is not Car car) return;
+
+            var w = new CarProfileWindow(car.Id);
+            w.ShowDialog();
+
+            LoadPerson();
+        }
+
+        private void AddTestCar_Click(object sender, RoutedEventArgs e)
+        {
+            if (_person == null) return;
+
+            try
+            {
+                _carService.AddCar(
+                    _personId,
+                    "Porsche",
+                    "Cayenne",
+                    "Test-" + _person.Id + "-" + DateTime.Now.Ticks.ToString().Substring(10),
+                    1234
+                );
+
+                LoadPerson();
+                MessageBox.Show("Test car added.");
+            }
+            catch( Exception ex )
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

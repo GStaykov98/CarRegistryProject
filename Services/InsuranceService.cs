@@ -21,6 +21,11 @@ namespace CarRegistryProject.Services
                 throw new ArgumentException("End date cannot be before start date.");
             }
 
+            if (policyNumber.Length == 0)
+            {
+                throw new ArgumentException("Policy number is required.");
+            }
+
             using var db = new AppDbContext();
 
             var car = db.Cars

@@ -1,0 +1,76 @@
+﻿<Window x:Class="CarRegistryProject.CarProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CarRegistryProject"
+        mc:Ignorable="d"
+        Title="CarProfileWindow" Height="520" Width="700">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock x:Name="CarHeaderText"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Margin="0,0,0,6"/>
+
+        <!-- Basic car info -->
+        <TextBlock x:Name="CarInfoText"
+                   Grid.Row="1"
+                   FontSize="13"
+                   Margin="0,0,0,12"/>
+
+        <!-- Insurance info area (we’ll add buttons next) -->
+        <StackPanel Grid.Row="2" Orientation="Vertical" VerticalAlignment="Top" >
+
+            <GroupBox Header="Insurance (Third-party)" Margin="0,0,0,10">
+                <StackPanel Margin="10">
+                    <GroupBox Header="Insurance (Third-party)" Margin="0,0,0,10">
+                        <StackPanel Margin="10">
+
+                            <TextBlock x:Name="InsuranceText" Margin="0,0,0,8"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <DatePicker x:Name="InsuranceStartDatePicker" Width="140" Margin="0,0,8,0"/>
+                                <DatePicker x:Name="InsuranceEndDatePicker" Width="140"/>
+                            </StackPanel>
+                            <TextBox x:Name="InsurancePolicyNumberBox"
+                                        Width="200"
+                                        Height="26"
+                                        Margin="0,0,0,8"
+                                        VerticalContentAlignment="Center"
+                                        ToolTip="Policy number"/>
+
+
+                            <ComboBox x:Name="InstallmentPlanBox" Width="200" Margin="0,0,0,8"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Create / Update"
+                    Width="120"
+                    Margin="0,0,8,0"
+                    Click="CreateOrUpdateInsurance_Click"/>
+
+                                <Button Content="Remove"
+                    Width="80"
+                    Click="RemoveInsurance_Click"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Comprehensive Insurance" Margin="0,0,0,10">
+                <StackPanel Margin="10">
+                    <TextBlock x:Name="ComprehensiveText" />
+                </StackPanel>
+            </GroupBox>
+
+        </StackPanel>
+    </Grid>
+</Window>

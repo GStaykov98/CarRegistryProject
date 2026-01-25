@@ -64,7 +64,7 @@ namespace CarRegistryProject
             }
         }
 
-        private void PeopleGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void PeopleGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (PeopleGrid.SelectedItem is not Person p) return;
 

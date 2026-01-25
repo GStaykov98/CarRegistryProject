@@ -11,13 +11,15 @@ namespace CarRegistryProject.Services
 {
     public class PersonService
     {
-        public Person CreatePerson(string name, string governmentId, int phoneNumber)
+        public Person CreatePerson(string name, string governmentId, string phoneNumber)
         {
             name = (name ?? "").Trim();
             governmentId = (governmentId ?? "").Trim();
+            phoneNumber = (phoneNumber ?? "").Trim();
 
             if (name.Length == 0) throw new ArgumentException("Name is required.");
             if (governmentId.Length == 0) throw new ArgumentException("ID is required.");
+            if (phoneNumber.Length == 0) throw new ArgumentException("Phone number is required.");
 
             using var db = new AppDbContext();
 
@@ -29,7 +31,8 @@ namespace CarRegistryProject.Services
             var person = new Person
             {
                 Name = name,
-                GovernmentId = governmentId
+                GovernmentId = governmentId,
+                PhoneNumber = phoneNumber
             };
 
             db.People.Add(person);

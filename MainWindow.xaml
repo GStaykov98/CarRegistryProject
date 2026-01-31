@@ -19,6 +19,7 @@
                  ToolTip="Search by Name or Government ID"/>
             <Button x:Name="SearchButton" Content="Search" Width="90" Height="28"
                 Click="SearchButton_Click"/>
+            <Button x:Name="TestButton" Content="Create" Width="90" Height="28" Click="AddTestPerson_Click"/>
         </StackPanel>
 
         <!-- Results -->

@@ -64,8 +64,11 @@ namespace CarRegistryProject.Data
 
             var dateOnlyConverter = new ValueConverter<DateOnly, string>(
                 d => d.ToString("yyyy-MM-dd"),
-                s => DateOnly.ParseExact(s, "yyyy-MM-dd")
-                );
+                s => DateOnly.ParseExact(s, "yyyy-MM-dd"));
+
+            var nullableDateOnlyConverter = new ValueConverter<DateOnly?, string?>(
+                d => d.HasValue ? d.Value.ToString("yyyy-MM-dd") : null,
+                s => string.IsNullOrWhiteSpace(s) ? null : DateOnly.Parse(s));
 
             modelBuilder.Entity<Insurance>()
                 .Property(i => i.StartDate)
@@ -82,6 +85,10 @@ namespace CarRegistryProject.Data
             modelBuilder.Entity<ComprehensiveInsurance>()
                .Property(i => i.EndDate)
                .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<Insurance>()
+                .Property(i => i.FutureStartDate)
+                .HasConversion(nullableDateOnlyConverter);
 
         }
 

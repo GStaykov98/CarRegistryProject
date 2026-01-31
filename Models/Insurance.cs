@@ -14,9 +14,16 @@ namespace CarRegistryProject.Models
         public int CarId { get; set; }
         public Car Car { get; set; }
 
+        //Currend insurance
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
         public InstallmentPlan InstallmentPlan { get; set; }
         public string PolicyNumber { get; set; } = "";
+
+        //Future insurance
+        public bool HasRenewal { get; set; }
+        public DateOnly? FutureStartDate {  get; set; }
+        public string? FuturePolicyNumber { get; set; }
+        public InstallmentPlan? FutureInstallmentPlan { get; set; }
     }
 }

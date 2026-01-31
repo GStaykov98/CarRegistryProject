@@ -37,7 +37,6 @@
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                 <DatePicker x:Name="InsuranceStartDatePicker" Width="140" Margin="0,0,8,0"/>
-                                <DatePicker x:Name="InsuranceEndDatePicker" Width="140"/>
                             </StackPanel>
                             <TextBox x:Name="InsurancePolicyNumberBox"
                                         Width="200"
@@ -50,14 +49,40 @@
                             <ComboBox x:Name="InstallmentPlanBox" Width="200" Margin="0,0,0,8"/>
 
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Create / Update"
+                                <Button Content="Create"
                     Width="120"
                     Margin="0,0,8,0"
-                    Click="CreateOrUpdateInsurance_Click"/>
+                    Click="CreateInsurance_Click"/>
 
                                 <Button Content="Remove"
                     Width="80"
                     Click="RemoveInsurance_Click"/>
+                            </StackPanel>
+                            <Separator Margin="0,10,0,10"/>
+
+                            <TextBlock Text="Scheduled renewal" FontWeight="Bold" Margin="0,0,0,6"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <DatePicker x:Name="FutureStartDatePicker" Width="140" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="FutureInstallmentPlanBox" Width="200"/>
+                            </StackPanel>
+
+                            <TextBox x:Name="FuturePolicyNumberBox"
+         Width="200"
+         Height="26"
+         Margin="0,0,0,8"
+         VerticalContentAlignment="Center"
+         ToolTip="Future policy number"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Save scheduled renewal"
+            Width="170"
+            Margin="0,0,8,0"
+            Click="SaveScheduledRenewal_Click"/>
+
+                                <Button Content="Cancel scheduled renewal"
+            Width="170"
+            Click="CancelScheduledRenewal_Click"/>
                             </StackPanel>
 
                         </StackPanel>

@@ -22,11 +22,15 @@ namespace CarRegistryProject
             InstallmentPlanBox.ItemsSource = Enum.GetValues(typeof(InstallmentPlan));
             InstallmentPlanBox.SelectedIndex = 0;
 
+            FutureInstallmentPlanBox.ItemsSource = Enum.GetValues(typeof(InstallmentPlan));
+            FutureInstallmentPlanBox.SelectedIndex = 0;
+
             LoadCar();
         }
 
         private void LoadCar()
         {
+            _insuranceService.ApplyExpiryAndRollover(_carId);
             _car = _carService.GetCarById(_carId);
 
             if (_car == null)
@@ -60,21 +64,61 @@ namespace CarRegistryProject
 
                 InsurancePolicyNumberBox.Text = _car.Insurance.PolicyNumber;
             }
+
+            if (_car.Insurance == null || !_car.Insurance.HasRenewal)
+            {
+                FutureStartDatePicker.SelectedDate = null;
+                FuturePolicyNumberBox.Text = "";
+                FutureInstallmentPlanBox.SelectedIndex = 0;
+            }
+            else
+            {
+                if (_car.Insurance.FutureStartDate.HasValue)
+                {
+                    FutureStartDatePicker.SelectedDate = _car.Insurance.FutureStartDate.Value.ToDateTime(TimeOnly.MinValue);
+                }
+                else
+                {
+                    FutureStartDatePicker.SelectedDate= null;
+                }
+
+                FuturePolicyNumberBox.Text = _car.Insurance.FuturePolicyNumber ?? "";
+
+                if (_car.Insurance.FutureInstallmentPlan.HasValue)
+                {
+                    FutureInstallmentPlanBox.SelectedItem = _car.Insurance.FutureInstallmentPlan.Value;
+                }
+                else
+                {
+                    FutureInstallmentPlanBox.SelectedItem = 0;
+                }
+            }
+
+            bool hasInsurance = _car.Insurance != null;
+
+            InsuranceStartDatePicker.IsEnabled = !hasInsurance;
+            InsurancePolicyNumberBox.IsEnabled = !hasInsurance;
+            InstallmentPlanBox.IsEnabled = !hasInsurance;
         }
 
-        private void CreateOrUpdateInsurance_Click(object sender, RoutedEventArgs e)
+        private void CreateInsurance_Click(object sender, RoutedEventArgs e)
         {
             if (_car == null) return;
 
-            if (InsuranceStartDatePicker.SelectedDate == null ||
-                InsuranceEndDatePicker.SelectedDate == null)
+            if (_car.Insurance != null)
             {
-                MessageBox.Show("Select start and end dates.");
+                MessageBox.Show("Insurance already exists. Use scheduled renewal for changes.");
+                return;
+            }
+
+            if (InsuranceStartDatePicker.SelectedDate == null)
+            {
+                MessageBox.Show("Select start date.");
                 return;
             }
 
             var start = DateOnly.FromDateTime(InsuranceStartDatePicker.SelectedDate.Value);
-            var end = DateOnly.FromDateTime(InsuranceEndDatePicker.SelectedDate.Value);
+            var end = start.AddYears(1).AddDays(-1);
             var plan = (InstallmentPlan)InstallmentPlanBox.SelectedItem;
             var policyNumber = (InsurancePolicyNumberBox.Text ?? "").Trim();
 
@@ -86,14 +130,7 @@ namespace CarRegistryProject
 
             try
             {
-                if (_car.Insurance == null)
-                {
-                    _insuranceService.CreateInsurance(_carId, start, end, plan, policyNumber);
-                }
-                else
-                {
-                    _insuranceService.UpdateInsurance(_carId, start, end, plan, policyNumber);
-                }
+                _insuranceService.CreateInsurance(_carId, start, end, plan, policyNumber);
 
                 LoadCar();
                 MessageBox.Show("Insurance saved.");
@@ -103,6 +140,44 @@ namespace CarRegistryProject
 
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void SaveScheduledRenewal_Click(object sender, RoutedEventArgs e)
+        {
+            if (_car == null || _car.Insurance == null)
+            {
+                MessageBox.Show("Create a current insurance first.");
+                return;
+            }
+
+            if (FutureStartDatePicker.SelectedDate == null)
+            {
+                MessageBox.Show("Select future start date.");
+                return;
+            }
+
+            var futureStart = DateOnly.FromDateTime(FutureStartDatePicker.SelectedDate.Value);
+            var futurePolicy = (FuturePolicyNumberBox.Text ?? "").Trim();
+            var futurePlan = (InstallmentPlan)FutureInstallmentPlanBox.SelectedValue;
+
+            try
+            {
+                _insuranceService.ScheduleRenewal(_carId, futureStart, futurePolicy, futurePlan);
+                LoadCar();
+                MessageBox.Show("Scheduled renewal saved.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void CancelScheduledRenewal_Click(object sender, RoutedEventArgs e)
+        {
+            if (_car == null || _car.Insurance == null) return;
+
+            _insuranceService.CancelScheduledRenewal(_carId);
+            LoadCar();
         }
 
         private void RemoveInsurance_Click(object sender, RoutedEventArgs e)

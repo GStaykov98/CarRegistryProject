@@ -57,31 +57,82 @@ namespace CarRegistryProject.Services
             return insurance;
         }
 
-        public Insurance UpdateInsurance(int carId, DateOnly startDate, DateOnly endDate, InstallmentPlan installmentPlan, string policyNumber)
+        public void ApplyExpiryAndRollover(int carId)
         {
-            policyNumber = (policyNumber ?? "").Trim();
+            using var db = new AppDbContext();
+            var today = DateOnly.FromDateTime(DateTime.Today);
 
-            if (endDate < startDate)
+            var insurance = db.Insurances.FirstOrDefault(i => i.CarId == carId);
+            if (insurance == null) return;
+
+            if (insurance.EndDate >= today) return;
+
+            if (insurance.HasRenewal &&
+                insurance.FutureStartDate.HasValue &&
+                insurance.FutureStartDate.Value <= today &&
+                !string.IsNullOrWhiteSpace(insurance.FuturePolicyNumber) &&
+                insurance.FutureInstallmentPlan.HasValue)
             {
-                throw new ArgumentException("End date cannot be before start date.");
+                insurance.StartDate = insurance.FutureStartDate.Value;
+                insurance.EndDate = insurance.StartDate.AddYears(1).AddDays(-1);
+                insurance.PolicyNumber = insurance.FuturePolicyNumber;
+                insurance.InstallmentPlan = insurance.FutureInstallmentPlan.Value;
+
+                insurance.HasRenewal = false;
+                insurance.FutureStartDate = null;
+                insurance.FuturePolicyNumber = null;
+                insurance.FutureInstallmentPlan = null;
+
+                db.SaveChanges();
+                return;
+            }
+
+            db.Insurances.Remove(insurance);
+            db.SaveChanges();
+        }
+
+        public void ScheduleRenewal(int carId, DateOnly futureStart, string futurePolicyNumber, InstallmentPlan futureInstallmentPlan)
+        {
+            futurePolicyNumber = (futurePolicyNumber ?? "").Trim();
+            if (futurePolicyNumber.Length == 0)
+            {
+                throw new ArgumentException("Future policy number is required.");
             }
 
             using var db = new AppDbContext();
 
-            var insurance = db.Insurances.FirstOrDefault(i => i.CarId == carId);
+            var insurance = db.Insurances.FirstOrDefault(x => x.CarId == carId);
             if (insurance == null)
             {
-                throw new InvalidOperationException("Insurance not found.");
+                throw new InvalidOperationException("No current insurance exists for this car.");
             }
 
-            insurance.StartDate = startDate;
-            insurance.EndDate = endDate;
-            insurance.InstallmentPlan = installmentPlan;
-            insurance.PolicyNumber = policyNumber;
+            if (futureStart <= insurance.EndDate)
+            {
+                throw new InvalidProgramException("Future start date must be after the currend end date.");
+            }
+
+            insurance.HasRenewal = true;
+            insurance.FutureStartDate = futureStart;
+            insurance.FuturePolicyNumber = futurePolicyNumber;
+            insurance.FutureInstallmentPlan = futureInstallmentPlan;
 
             db.SaveChanges();
+        }
 
-            return insurance;
+        public void CancelScheduledRenewal(int _carId)
+        {
+            using var db = new AppDbContext();
+
+            var insurance = db.Insurances.FirstOrDefault(x => x.CarId == _carId);
+            if (insurance == null) return;
+
+            insurance.HasRenewal = false;
+            insurance.FutureStartDate = null;
+            insurance.FuturePolicyNumber = null;
+            insurance.FutureInstallmentPlan = 0;
+
+            db.SaveChanges();
         }
 
         public void RemoveInsurance(int carId)

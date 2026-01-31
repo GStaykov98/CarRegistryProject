@@ -48,21 +48,17 @@ namespace CarRegistryProject
             {
                 InsuranceText.Text = "No insurance";
                 InsuranceStartDatePicker.SelectedDate = null;
-                InsuranceEndDatePicker.SelectedDate = null;
                 InsurancePolicyNumberBox.Text = "";
                 InstallmentPlanBox.SelectedIndex = 0;
             }
             else
             {
-                InsuranceText.Text = $"Start: {_car.Insurance.StartDate}\nEnd: {_car.Insurance.EndDate}\nPlan: {_car.Insurance.InstallmentPlan}";
+                InsuranceText.Text = $"Start: {_car.Insurance.StartDate}\nEnd: {_car.Insurance.EndDate}\nPlan: {_car.Insurance.InstallmentPlan}" +
+                    $"\nPolicy number: {_car.Insurance.PolicyNumber}";
 
-                InsuranceStartDatePicker.SelectedDate = _car.Insurance.StartDate.ToDateTime(TimeOnly.MinValue);
-
-                InsuranceEndDatePicker.SelectedDate = _car.Insurance.EndDate.ToDateTime(TimeOnly.MinValue);
-
-                InstallmentPlanBox.SelectedItem = _car.Insurance.InstallmentPlan;
-
-                InsurancePolicyNumberBox.Text = _car.Insurance.PolicyNumber;
+                InsuranceStartDatePicker.SelectedDate = null;
+                InstallmentPlanBox.SelectedIndex = 0;
+                InsurancePolicyNumberBox.Text = "";
             }
 
             if (_car.Insurance == null || !_car.Insurance.HasRenewal)
@@ -90,7 +86,7 @@ namespace CarRegistryProject
                 }
                 else
                 {
-                    FutureInstallmentPlanBox.SelectedItem = 0;
+                    FutureInstallmentPlanBox.SelectedIndex = 0;
                 }
             }
 
@@ -99,6 +95,12 @@ namespace CarRegistryProject
             InsuranceStartDatePicker.IsEnabled = !hasInsurance;
             InsurancePolicyNumberBox.IsEnabled = !hasInsurance;
             InstallmentPlanBox.IsEnabled = !hasInsurance;
+
+            bool hasScheduledRenewal = _car?.Insurance != null && _car.Insurance.HasRenewal;
+
+            FutureStartDatePicker.IsEnabled = !hasScheduledRenewal;
+            FuturePolicyNumberBox.IsEnabled = !hasScheduledRenewal;
+            FutureInstallmentPlanBox.IsEnabled = !hasScheduledRenewal;
         }
 
         private void CreateInsurance_Click(object sender, RoutedEventArgs e)
@@ -118,7 +120,6 @@ namespace CarRegistryProject
             }
 
             var start = DateOnly.FromDateTime(InsuranceStartDatePicker.SelectedDate.Value);
-            var end = start.AddYears(1).AddDays(-1);
             var plan = (InstallmentPlan)InstallmentPlanBox.SelectedItem;
             var policyNumber = (InsurancePolicyNumberBox.Text ?? "").Trim();
 
@@ -130,7 +131,7 @@ namespace CarRegistryProject
 
             try
             {
-                _insuranceService.CreateInsurance(_carId, start, end, plan, policyNumber);
+                _insuranceService.CreateInsurance(_carId, start, plan, policyNumber);
 
                 LoadCar();
                 MessageBox.Show("Insurance saved.");
@@ -156,9 +157,21 @@ namespace CarRegistryProject
                 return;
             }
 
+            if (_car.Insurance.HasRenewal)
+            {
+                MessageBox.Show("Scheduled renewal already exists. Cancel it first to make changes.");
+                return;
+            }
+
             var futureStart = DateOnly.FromDateTime(FutureStartDatePicker.SelectedDate.Value);
             var futurePolicy = (FuturePolicyNumberBox.Text ?? "").Trim();
-            var futurePlan = (InstallmentPlan)FutureInstallmentPlanBox.SelectedValue;
+            var futurePlan = (InstallmentPlan)FutureInstallmentPlanBox.SelectedItem;
+
+            if (futurePolicy.Length == 0)
+            {
+                MessageBox.Show("Future policy number is required.");
+                return;
+            }
 
             try
             {

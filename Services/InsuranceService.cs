@@ -12,19 +12,16 @@ namespace CarRegistryProject.Services
 {
     public class InsuranceService
     {
-        public Insurance CreateInsurance(int carId, DateOnly startDate, DateOnly endDate, InstallmentPlan installmentPlan, string policyNumber)
+        public Insurance CreateInsurance(int carId, DateOnly startDate, InstallmentPlan installmentPlan, string policyNumber)
         {
             policyNumber = (policyNumber ?? "").Trim();
-
-            if (endDate < startDate)
-            {
-                throw new ArgumentException("End date cannot be before start date.");
-            }
 
             if (policyNumber.Length == 0)
             {
                 throw new ArgumentException("Policy number is required.");
             }
+
+            var endDate = startDate.AddYears(1).AddDays(-1);
 
             using var db = new AppDbContext();
 
@@ -75,7 +72,7 @@ namespace CarRegistryProject.Services
             {
                 insurance.StartDate = insurance.FutureStartDate.Value;
                 insurance.EndDate = insurance.StartDate.AddYears(1).AddDays(-1);
-                insurance.PolicyNumber = insurance.FuturePolicyNumber;
+                insurance.PolicyNumber = insurance.FuturePolicyNumber!.Trim();
                 insurance.InstallmentPlan = insurance.FutureInstallmentPlan.Value;
 
                 insurance.HasRenewal = false;
@@ -84,6 +81,13 @@ namespace CarRegistryProject.Services
                 insurance.FutureInstallmentPlan = null;
 
                 db.SaveChanges();
+                return;
+            }
+
+            if (insurance.HasRenewal &&
+                insurance.FutureStartDate.HasValue &&
+                insurance.FutureStartDate.Value > today)
+            {
                 return;
             }
 
@@ -109,7 +113,7 @@ namespace CarRegistryProject.Services
 
             if (futureStart <= insurance.EndDate)
             {
-                throw new InvalidProgramException("Future start date must be after the currend end date.");
+                throw new InvalidOperationException("Future start date must be after the current end date.");
             }
 
             insurance.HasRenewal = true;
@@ -130,7 +134,7 @@ namespace CarRegistryProject.Services
             insurance.HasRenewal = false;
             insurance.FutureStartDate = null;
             insurance.FuturePolicyNumber = null;
-            insurance.FutureInstallmentPlan = 0;
+            insurance.FutureInstallmentPlan = null;
 
             db.SaveChanges();
         }

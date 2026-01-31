@@ -30,63 +30,62 @@
 
             <GroupBox Header="Insurance (Third-party)" Margin="0,0,0,10">
                 <StackPanel Margin="10">
-                    <GroupBox Header="Insurance (Third-party)" Margin="0,0,0,10">
-                        <StackPanel Margin="10">
 
-                            <TextBlock x:Name="InsuranceText" Margin="0,0,0,8"/>
+                    <TextBlock x:Name="InsuranceText" Margin="0,0,0,8"/>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <DatePicker x:Name="InsuranceStartDatePicker" Width="140" Margin="0,0,8,0"/>
-                            </StackPanel>
-                            <TextBox x:Name="InsurancePolicyNumberBox"
-                                        Width="200"
-                                        Height="26"
-                                        Margin="0,0,0,8"
-                                        VerticalContentAlignment="Center"
-                                        ToolTip="Policy number"/>
+                    <!-- Current insurance creation -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <DatePicker x:Name="InsuranceStartDatePicker" Width="140"/>
+                    </StackPanel>
 
+                    <TextBox x:Name="InsurancePolicyNumberBox"
+                     Width="200"
+                     Height="26"
+                     Margin="0,0,0,8"
+                     VerticalContentAlignment="Center"
+                     ToolTip="Policy number"/>
 
-                            <ComboBox x:Name="InstallmentPlanBox" Width="200" Margin="0,0,0,8"/>
+                    <ComboBox x:Name="InstallmentPlanBox" Width="200" Margin="0,0,0,8"/>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Create"
-                    Width="120"
-                    Margin="0,0,8,0"
-                    Click="CreateInsurance_Click"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Create"
+                        Width="120"
+                        Margin="0,0,8,0"
+                        Click="CreateInsurance_Click"/>
 
-                                <Button Content="Remove"
-                    Width="80"
-                    Click="RemoveInsurance_Click"/>
-                            </StackPanel>
-                            <Separator Margin="0,10,0,10"/>
+                        <Button Content="Remove"
+                        Width="80"
+                        Click="RemoveInsurance_Click"/>
+                    </StackPanel>
 
-                            <TextBlock Text="Scheduled renewal" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <!-- Scheduled renewal -->
+                    <Separator Margin="0,10,0,10"/>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <DatePicker x:Name="FutureStartDatePicker" Width="140" Margin="0,0,8,0"/>
-                                <ComboBox x:Name="FutureInstallmentPlanBox" Width="200"/>
-                            </StackPanel>
+                    <TextBlock Text="Scheduled renewal" FontWeight="Bold" Margin="0,0,0,6"/>
 
-                            <TextBox x:Name="FuturePolicyNumberBox"
-         Width="200"
-         Height="26"
-         Margin="0,0,0,8"
-         VerticalContentAlignment="Center"
-         ToolTip="Future policy number"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <DatePicker x:Name="FutureStartDatePicker" Width="140" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="FutureInstallmentPlanBox" Width="200"/>
+                    </StackPanel>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Save scheduled renewal"
-            Width="170"
-            Margin="0,0,8,0"
-            Click="SaveScheduledRenewal_Click"/>
+                    <TextBox x:Name="FuturePolicyNumberBox"
+                     Width="200"
+                     Height="26"
+                     Margin="0,0,0,8"
+                     VerticalContentAlignment="Center"
+                     ToolTip="Future policy number"/>
 
-                                <Button Content="Cancel scheduled renewal"
-            Width="170"
-            Click="CancelScheduledRenewal_Click"/>
-                            </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Save scheduled renewal"
+                        Width="170"
+                        Margin="0,0,8,0"
+                        Click="SaveScheduledRenewal_Click"/>
 
-                        </StackPanel>
-                    </GroupBox>
+                        <Button Content="Cancel scheduled renewal"
+                        Width="170"
+                        Click="CancelScheduledRenewal_Click"/>
+                    </StackPanel>
+
                 </StackPanel>
             </GroupBox>
 
